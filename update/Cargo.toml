@@ -1,0 +1,10 @@
+[package]
+name = "update"
+version = "0.1.0"
+
+[dependencies]
+shared = { path = "../shared" }
+
+[lib]
+crate-type = ["rlib", "dylib"]
+

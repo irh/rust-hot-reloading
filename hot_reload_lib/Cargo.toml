@@ -1,0 +1,7 @@
+[package]
+name = "hot_reload_lib"
+version = "0.1.0"
+
+[dependencies]
+libloading = "0.5"
+notify = "4.0.0"

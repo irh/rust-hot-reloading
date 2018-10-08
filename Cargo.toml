@@ -1,0 +1,25 @@
+[package]
+name = "livecoding"
+version = "0.1.0"
+
+[workspace]
+members = [
+  "hot_reload_lib",
+  "update",
+  "view",
+  "shared",
+]
+
+[dependencies]
+hot_reload_lib = { path = "hot_reload_lib" }
+shared = { path = "shared" }
+update = { path = "update"}
+rand = "0.5.4"
+view = { path = "view"}
+
+[features]
+hot_reload_libs = []
+
+[[bin]]
+name = "app"
+path = "app/main.rs"
