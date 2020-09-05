@@ -12,6 +12,7 @@ Plus, I wanted to explore how to extend the idea to build a deployable, statical
 
 ## Trying out the example application
 
+- The test scripts use [Cargo Watch](https://github.com/passcod/cargo-watch), which you can install by running `cargo install cargo-watch`.
 - In separate terminals, run both the `watch-app.sh` and the `watch-libs.sh` scripts.
   - `watch-app.sh` takes care of updating the main application when necessary, and `watch-libs.sh` looks after updating the dynamic libraries.
 - In the application output, you will see a series of numbers being printed.
