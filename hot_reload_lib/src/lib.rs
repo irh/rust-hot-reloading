@@ -54,6 +54,7 @@ impl HotReloadLib {
     }
 
     pub fn update(&mut self) {
+        let mut should_reload = false;
         for event in self.watch_event_receiver.try_iter() {
             if let RawEvent {
                 path: Some(path),
@@ -63,16 +64,20 @@ impl HotReloadLib {
             {
                 if path.as_path() == self.original_lib_path {
                     println!("Found update for {:?} with {:?}", path, op);
+                    // On Linux notify creates both CREATE and REMOVE events
                     if !(op & (CREATE | REMOVE)).is_empty() {
-                        println!("Reloading library");
-                        self.library = None; // Work around library not reloading
-                        fs::remove_file(&self.loaded_path).unwrap();
-                        let (library, path) = copy_and_load_library(&self.original_lib_path_string);
-                        self.library = Some(library);
-                        self.loaded_path = path;
+                        should_reload = true;
                     }
                 }
             }
+        }
+        if should_reload {
+            println!("Reloading library");
+            self.library = None; // Work around library not reloading
+            fs::remove_file(&self.loaded_path).unwrap();
+            let (library, path) = copy_and_load_library(&self.original_lib_path_string);
+            self.library = Some(library);
+            self.loaded_path = path;
         }
     }
 }
