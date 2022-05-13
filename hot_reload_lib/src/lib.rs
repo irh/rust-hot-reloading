@@ -21,7 +21,10 @@ impl HotReloadLib {
     pub fn new(folder: &str, lib_name: &str) -> Self {
         let lib_path_string = {
             let prefix = "lib";
+            #[cfg(not(target_os = "linux"))]
             let extension = "dylib";
+            #[cfg(target_os = "linux")]
+            let extension = "so";
             format!("{}/{}{}.{}", folder, prefix, lib_name, extension)
         };
         let lib_path = Path::new(&lib_path_string).canonicalize().unwrap();
@@ -59,7 +62,9 @@ impl HotReloadLib {
             } = event
             {
                 if path.as_path() == self.original_lib_path {
-                    if op == CREATE | REMOVE {
+                    println!("Found update for {:?} with {:?}", path, op);
+                    if !(op & (CREATE | REMOVE)).is_empty() {
+                        println!("Reloading library");
                         self.library = None; // Work around library not reloading
                         fs::remove_file(&self.loaded_path).unwrap();
                         let (library, path) = copy_and_load_library(&self.original_lib_path_string);
@@ -91,8 +96,10 @@ fn copy_and_load_library(lib_path: &String) -> (lib::Library, PathBuf) {
     fs::copy(&lib_path, &unique_name).expect("Failed to copy lib to unique path");
     let unique_lib_path = Path::new(&unique_name).canonicalize().unwrap();
     (
-        lib::Library::new(unique_lib_path.as_os_str())
-            .expect(format!("Failed to load library '{:?}'", unique_lib_path).as_str()),
+        unsafe {
+            lib::Library::new(unique_lib_path.as_os_str())
+                .expect(format!("Failed to load library '{:?}'", unique_lib_path).as_str())
+        },
         unique_lib_path,
     )
 }

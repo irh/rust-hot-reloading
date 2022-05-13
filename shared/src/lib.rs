@@ -10,7 +10,7 @@ pub struct State {
 impl State {
     pub fn new(rng: Box<dyn Rng>) -> State {
         State {
-            rng: rng,
+            rng,
             items: Default::default(),
         }
     }
