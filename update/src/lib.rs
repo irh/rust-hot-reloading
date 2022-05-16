@@ -14,4 +14,3 @@ pub fn update_state(state: &mut State) {
         state.items.remove(0);
     }
 }
-

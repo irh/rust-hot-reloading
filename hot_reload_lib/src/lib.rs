@@ -36,7 +36,7 @@ impl HotReloadLib {
         HotReloadLib {
             original_lib_path_string: lib_path_string,
             original_lib_path: lib_path,
-            loaded_path: loaded_path,
+            loaded_path,
             library: Some(library),
             watch_event_receiver: rx,
             _watcher: watcher,
@@ -47,7 +47,7 @@ impl HotReloadLib {
         match self.library {
             Some(ref x) => unsafe {
                 x.get(symbol_name.as_bytes())
-                    .expect(format!("Failed to find symbol '{:?}'", symbol_name).as_str())
+                    .unwrap_or_else(|_| panic!("Failed to find symbol '{:?}'", symbol_name))
             },
             None => panic!(),
         }
@@ -103,7 +103,7 @@ fn copy_and_load_library(lib_path: &String) -> (lib::Library, PathBuf) {
     (
         unsafe {
             lib::Library::new(unique_lib_path.as_os_str())
-                .expect(format!("Failed to load library '{:?}'", unique_lib_path).as_str())
+                .unwrap_or_else(|_| panic!("Failed to load library '{:?}'", unique_lib_path))
         },
         unique_lib_path,
     )

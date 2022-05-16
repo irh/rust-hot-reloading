@@ -54,7 +54,7 @@ struct Application {
 
 impl Application {
     fn new(_hot_reload_libs_folder: &str) -> Application {
-        let rng = Box::new(RngImpl{});
+        let rng = Box::new(RngImpl {});
 
         Application {
             state: shared::State::new(rng),
@@ -90,7 +90,6 @@ impl Application {
 }
 
 fn main() {
-
     let mut app = Application::new("target/debug");
 
     println!("Starting loop");
