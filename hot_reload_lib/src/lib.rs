@@ -5,7 +5,6 @@ use std::path::{Path, PathBuf};
 use std::sync::mpsc::{channel, Receiver};
 use std::{fs, time};
 
-use notify::op::*;
 use notify::{raw_watcher, RawEvent, RecursiveMode, Watcher};
 
 pub struct HotReloadLib {
@@ -57,6 +56,8 @@ impl HotReloadLib {
     }
 
     pub fn update(&mut self) -> bool {
+        use notify::op::*;
+
         let mut should_reload = false;
 
         for event in self.watch_event_receiver.try_iter() {
@@ -67,8 +68,9 @@ impl HotReloadLib {
             } = event
             {
                 if path.as_path() == self.original_lib_path {
-                    // On Linux notify creates both CREATE and REMOVE events
-                    if !(op & (CREATE | REMOVE)).is_empty() {
+                    // dbg!(op);
+
+                    if op == CREATE {
                         should_reload = true;
                     }
                 }
