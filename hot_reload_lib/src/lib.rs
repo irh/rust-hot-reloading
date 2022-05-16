@@ -33,7 +33,9 @@ impl HotReloadLib {
         let (tx, rx) = channel();
         let (library, loaded_path) = copy_and_load_library(&lib_path_string);
         let mut watcher = raw_watcher(tx).unwrap();
-        watcher.watch(folder, RecursiveMode::NonRecursive).unwrap();
+        watcher
+            .watch(&lib_path, RecursiveMode::NonRecursive)
+            .unwrap();
 
         HotReloadLib {
             original_lib_path_string: lib_path_string,
@@ -55,7 +57,7 @@ impl HotReloadLib {
         }
     }
 
-    pub fn update(&mut self) {
+    pub fn update(&mut self) -> bool {
         let mut should_reload = false;
 
         for event in self.watch_event_receiver.try_iter() {
@@ -66,7 +68,6 @@ impl HotReloadLib {
             } = event
             {
                 if path.as_path() == self.original_lib_path {
-                    println!("Found update for {:?} with {:?}", path, op);
                     // On Linux notify creates both CREATE and REMOVE events
                     if !(op & (CREATE | REMOVE)).is_empty() {
                         should_reload = true;
@@ -76,13 +77,14 @@ impl HotReloadLib {
         }
 
         if should_reload {
-            println!("Reloading library");
             self.library = None; // Work around library not reloading
             fs::remove_file(&self.loaded_path).unwrap();
             let (library, path) = copy_and_load_library(&self.original_lib_path_string);
             self.library = Some(library);
             self.loaded_path = path;
         }
+
+        should_reload
     }
 }
 

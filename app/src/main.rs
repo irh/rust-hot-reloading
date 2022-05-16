@@ -40,8 +40,12 @@ impl HotReloadLibs {
     }
 
     fn update_libs(&mut self) {
-        self.update.update();
-        self.view.update();
+        if self.update.update() {
+            println!("Reloaded update lib");
+        }
+        if self.view.update() {
+            println!("Reloaded view lib");
+        }
     }
 }
 
@@ -92,7 +96,8 @@ impl Application {
 fn main() {
     let mut app = Application::new("target/debug");
 
-    println!("Starting loop");
+    println!("Starting application loop");
+
     loop {
         #[cfg(feature = "hot_reload_libs")]
         app.libs.update_libs();
