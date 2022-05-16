@@ -1,5 +1,13 @@
 [package]
-name = "myapp"
+name = "app"
 version = "0.1.0"
 
+[dependencies]
+hot_reload_lib = { path = "../hot_reload_lib" }
+shared = { path = "../shared" }
+update = { path = "../update"}
+rand = "0.5.4"
+view = { path = "../view"}
 
+[features]
+hot_reload_libs = []
