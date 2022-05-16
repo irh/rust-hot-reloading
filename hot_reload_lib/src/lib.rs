@@ -21,10 +21,12 @@ impl HotReloadLib {
     pub fn new(folder: &str, lib_name: &str) -> Self {
         let lib_path_string = {
             let prefix = "lib";
-            #[cfg(not(target_os = "linux"))]
+
+            #[cfg(target_os = "macos")]
             let extension = "dylib";
             #[cfg(target_os = "linux")]
             let extension = "so";
+
             format!("{}/{}{}.{}", folder, prefix, lib_name, extension)
         };
         let lib_path = Path::new(&lib_path_string).canonicalize().unwrap();
@@ -55,6 +57,7 @@ impl HotReloadLib {
 
     pub fn update(&mut self) {
         let mut should_reload = false;
+
         for event in self.watch_event_receiver.try_iter() {
             if let RawEvent {
                 path: Some(path),
@@ -71,6 +74,7 @@ impl HotReloadLib {
                 }
             }
         }
+
         if should_reload {
             println!("Reloading library");
             self.library = None; // Work around library not reloading
