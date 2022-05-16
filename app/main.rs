@@ -90,8 +90,10 @@ impl Application {
 }
 
 fn main() {
+
     let mut app = Application::new("target/debug");
 
+    println!("Starting loop");
     loop {
         #[cfg(feature = "hot_reload_libs")]
         app.libs.update_libs();
@@ -99,6 +101,6 @@ fn main() {
         app.update_state();
         app.view_state();
 
-        thread::sleep(time::Duration::from_millis(200));
+        thread::sleep(time::Duration::from_millis(1000));
     }
 }
