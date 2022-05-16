@@ -33,9 +33,8 @@ impl HotReloadLib {
         let (tx, rx) = channel();
         let (library, loaded_path) = copy_and_load_library(&lib_path_string);
         let mut watcher = raw_watcher(tx).unwrap();
-        watcher
-            .watch(&lib_path, RecursiveMode::NonRecursive)
-            .unwrap();
+        // Watch the folder and then filter events based on the library path
+        watcher.watch(&folder, RecursiveMode::NonRecursive).unwrap();
 
         HotReloadLib {
             original_lib_path_string: lib_path_string,
